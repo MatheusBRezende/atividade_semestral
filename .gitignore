@@ -1,2 +1,19 @@
+# Pastas de compilação (o que você já tem)
 bin/
 obj/
+
+# Pacotes NuGet
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Configurações do Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Arquivos de log e cache
+*.log
+.DS_Store (se estiver no Mac)
