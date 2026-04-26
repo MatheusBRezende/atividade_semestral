@@ -1,4 +1,4 @@
-# Pastas de compilação (o que você já tem)
+# Pastas de compilação
 bin/
 obj/
 
@@ -16,4 +16,5 @@ packages/
 
 # Arquivos de log e cache
 *.log
-.DS_Store (se estiver no Mac)
+.DS_Store
+.env
