@@ -36,8 +36,6 @@ if (app.Environment.IsDevelopment())
 }
 
 
-// TODO [11]: Mapear endpoints de /filmes — GET (todos), GET (por id), POST, PUT, DELETE
-
 app.MapGet("/filmes", async (IFilmeService filmeService) =>
 {
     var filmes = await filmeService.GetAllFilmesAsync();
@@ -87,7 +85,65 @@ app.MapDelete("/filmes/{id}", async (string id, IFilmeService filmeService) =>
     }
 });
 
-// TODO [12]: Mapear endpoints de /resenhas — GET (todos), GET (por id), GET (por filmeId), POST, PUT, DELETE
+app.MapGet("/resenhas", async (IResenhaService resenhaService) =>
+{
+    var resenhas = await resenhaService.GetAllResenhasAsync();
+    return Results.Ok(resenhas);
+});
+
+app.MapGet("/resenhas/{id}", async (string id, IResenhaService resenhaService) =>
+{
+    var resenha = await resenhaService.GetResenhaByIdAsync(id);
+    return resenha is not null ? Results.Ok(resenha) : Results.NotFound($"Resenha com ID '{id}' não encontrada");
+});
+
+app.MapGet("/resenhas/filme/{filmeId}", async (string filmeId, IResenhaService resenhaService) =>
+{
+    var resenhas = await resenhaService.GetResenhasByFilmeIdAsync(filmeId);
+    return Results.Ok(resenhas);
+});
+
+app.MapPost("/resenhas", async (Resenha resenha, IResenhaService resenhaService) =>
+{
+    try
+    {
+        await resenhaService.CreateResenhaAsync(resenha);
+        return Results.Created($"/resenhas/{resenha.Id}", resenha);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
+app.MapPut("/resenhas/{id}", async (string id, Resenha resenha, IResenhaService resenhaService) =>
+{
+    if (resenha.Id != null && resenha.Id != id)
+        return Results.BadRequest("O ID da resenha no corpo da requisição não corresponde ao ID da URL");
+
+    try
+    {
+        await resenhaService.UpdateResenhaAsync(id, resenha);
+        return Results.NoContent();
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+});
+
+app.MapDelete("/resenhas/{id}", async (string id, IResenhaService resenhaService) =>
+{
+    try
+    {
+        await resenhaService.DeleteResenhaAsync(id);
+        return Results.NoContent();
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+});
 
 app.MapGet("/mongo-test", async (IMongoDatabase db) =>
 {
