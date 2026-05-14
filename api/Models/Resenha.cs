@@ -11,7 +11,6 @@ public class Resenha
     public string? Id { get; set; }
 
     [Required(ErrorMessage = "O ID do filme é obrigatório.")]
-    [BsonRepresentation(BsonType.ObjectId)]
     public string FilmeId { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O nome do autor é obrigatório.")]

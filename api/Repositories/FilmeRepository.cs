@@ -26,6 +26,7 @@ public class FilmeRepository : IFilmeRepository
 
     public async Task UpdateAsync(string id, Filme filme) =>
         await _collection.ReplaceOneAsync(f => f.Id == id, filme);
+        
     public async Task DeleteAsync(string id) =>
         await _collection.DeleteOneAsync(f => f.Id == id);
 }
