@@ -51,7 +51,7 @@ A aplicação segue o padrão de camadas:
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/FilmesEResenha
+git clone https://github.com/MatheusBRezende/FilmesEResenha
 cd FilmesEResenha
 ```
 
