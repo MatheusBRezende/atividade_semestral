@@ -235,7 +235,6 @@ GET /api/resenhas/filme/664a1f2e3b4c5d6e7f8a9b0c
 | `MongoDb__ConnectionString` | String de conexão com o MongoDB    | `mongodb://localhost:27017`          |
 | `MongoDb__DatabaseName`     | Nome do banco de dados             | `filmesresenha`                      |
 
-> ⚠️ **Nunca commite valores reais** de conexão no repositório. Use variáveis de ambiente ou um arquivo `.env` listado no `.gitignore`.
 
 ---
 
