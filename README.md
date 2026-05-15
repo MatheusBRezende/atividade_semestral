@@ -1,52 +1,39 @@
 # 🎬 Filmes & Resenhas API
 
-> API REST para gerenciamento de filmes e resenhas, desenvolvida em .NET com persistência no MongoDB.
+API RESTful para gerenciamento de filmes e resenhas, desenvolvida como Trabalho Prático Semestral da disciplina **Arquitetura de Aplicações Web — 2026.1**.
 
 ---
 
-## 📋 Descrição
+## 📖 Descrição do Projeto
 
-O **Filmes & Resenhas** é uma aplicação web que permite cadastrar filmes e associar resenhas a eles. O sistema expõe uma API REST completa com operações de CRUD para as duas entidades principais — **Filme** e **Resenha** — além de uma página web que consome a API de forma assíncrona.
+O sistema permite cadastrar filmes e associar resenhas a eles. Cada resenha contém uma nota (de 1 a 5), um texto avaliativo e o nome do autor. A API valida a existência do filme antes de permitir o cadastro de uma resenha, garantindo integridade referencial na camada de serviço.
 
-**Domínio:** Plataforma de avaliação de filmes, onde usuários podem cadastrar filmes e escrever resenhas com notas de 1 a 5.
-
----
-
-## 🏗️ Arquitetura
-
-```
-Client (Frontend)
-      │
-      ▼
- Minimal API (.NET 10)
-  ├── /api/filmes   → FilmeService → FilmeRepository
-  └── /api/resenhas → ResenhaService → ResenhaRepository
-                                              │
-                                              ▼
-                                         MongoDB Atlas
-                                     (filmes / resenhas)
-```
-
-A aplicação segue o padrão de camadas:
-
-| Camada       | Responsabilidade                              |
-|--------------|-----------------------------------------------|
-| **Endpoints**    | Recebe requisições HTTP, retorna respostas    |
-| **Service**      | Regras de negócio e validações               |
-| **Repository**   | Acesso e persistência no banco de dados       |
-| **Models**       | Definição das entidades e validações          |
+**Entidades principais:**
+- **Filme** — título, diretor, sinopse, ano de lançamento, gênero e status de lançamento.
+- **Resenha** — referência ao filme, nome do autor, nota (1–5), texto e data de criação.
 
 ---
 
-## 🛠️ Pré-requisitos
+## 🛠️ Stack Tecnológica
+
+| Camada   | Tecnologia                          |
+|----------|-------------------------------------|
+| Backend  | .NET 10 (C#) — Minimal API         |
+| Banco    | MongoDB                             |
+| Docs     | Swagger / OpenAPI (Swashbuckle)     |
+| Frontend | HTML + JavaScript (fetch assíncrono)|
+
+---
+
+## ✅ Pré-requisitos
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- [MongoDB](https://www.mongodb.com/) (local ou Atlas)
-- [Git](https://git-scm.com/)
+- [MongoDB](https://www.mongodb.com/try/download/community) rodando localmente **ou** via Docker
+- Git
 
 ---
 
-## 🚀 Como executar localmente
+## 🚀 Como executar o projeto localmente
 
 ### 1. Clone o repositório
 
@@ -57,39 +44,26 @@ cd FilmesEResenha
 
 ### 2. Configure as variáveis de ambiente
 
-Crie um arquivo `.env` ou configure as variáveis de ambiente do sistema. Você pode usar o arquivo `.env` de exemplo como base (veja a seção [Variáveis de Ambiente](#-variáveis-de-ambiente)).
+Na pasta `api/`, crie um arquivo `.env` (ou configure as variáveis no sistema operacional):
 
-No Linux/macOS:
-```bash
-export MongoDb__ConnectionString="mongodb://localhost:27017"
-export MongoDb__DatabaseName="filmesresenha"
+```env
+MongoDb__ConnectionString=mongodb://localhost:27017
+MongoDb__DatabaseName=ResenhasFilmes
 ```
 
-No Windows (PowerShell):
-```powershell
-$env:MongoDb__ConnectionString="mongodb://localhost:27017"
-$env:MongoDb__DatabaseName="filmesresenha"
-```
+> ⚠️ Nunca commite valores reais de credenciais. Use o `.env` apenas localmente.
 
-Alternativamente, configure em `appsettings.json` (não commite valores reais):
-```json
-{
-  "MongoDb": {
-    "ConnectionString": "mongodb://localhost:27017",
-    "DatabaseName": "filmesresenha"
-  }
-}
-```
-
-### 3. Restaure as dependências
+Alternativamente, você pode subir o MongoDB com Docker:
 
 ```bash
+docker run -d -p 27017:27017 --name mongo-resenhas mongo:latest
+```
+
+### 3. Restaure as dependências e execute
+
+```bash
+cd api
 dotnet restore
-```
-
-### 4. Execute a aplicação
-
-```bash
 dotnet run
 ```
 
@@ -99,7 +73,7 @@ A API estará disponível em:
 
 ---
 
-## 📖 Documentação Swagger
+## 📚 Documentação Swagger
 
 Com a aplicação rodando, acesse:
 
@@ -107,34 +81,40 @@ Com a aplicação rodando, acesse:
 http://localhost:5279/swagger
 ```
 
-A interface do Swagger permite explorar e testar todos os endpoints interativamente, com descrições, parâmetros, exemplos de corpo de requisição e respostas esperadas.
+A interface lista todos os endpoints com descrições, parâmetros, corpo das requisições e exemplos de resposta.
 
 ---
 
-## 📡 Endpoints da API
+## 🌐 Frontend
 
-### 🎬 Filmes — `/api/filmes`
+O frontend está na pasta `frontend/`. Para utilizá-lo, basta abrir o arquivo `index.html` no navegador (com a API rodando). As chamadas à API são feitas de forma assíncrona via `fetch`, sem recarregar a página.
 
-| Método | Rota                    | Descrição                          | Status       |
-|--------|-------------------------|------------------------------------|--------------|
-| GET    | `/api/filmes`           | Lista todos os filmes              | 200          |
-| GET    | `/api/filmes/{id}`      | Busca um filme pelo ID             | 200, 404     |
-| POST   | `/api/filmes`           | Cria um novo filme                 | 201, 400     |
-| PUT    | `/api/filmes/{id}`      | Atualiza um filme existente        | 204, 400, 404|
-| DELETE | `/api/filmes/{id}`      | Remove um filme pelo ID            | 204, 404     |
+---
 
-### 📝 Resenhas — `/api/resenhas`
+## 🔌 Endpoints da API
 
-| Método | Rota                             | Descrição                            | Status       |
-|--------|----------------------------------|--------------------------------------|--------------|
-| GET    | `/api/resenhas`                  | Lista todas as resenhas              | 200          |
-| GET    | `/api/resenhas/{id}`             | Busca uma resenha pelo ID            | 200, 404     |
-| GET    | `/api/resenhas/filme/{filmeId}`  | Lista resenhas de um filme específico| 200          |
-| POST   | `/api/resenhas`                  | Cria uma nova resenha                | 201, 400     |
-| PUT    | `/api/resenhas/{id}`             | Atualiza uma resenha existente       | 204, 400, 404|
-| DELETE | `/api/resenhas/{id}`             | Remove uma resenha pelo ID           | 204, 404     |
+### Filmes `/api/filmes`
 
-### 🔧 Utilitários
+| Método | Rota               | Descrição                        |
+|--------|--------------------|----------------------------------|
+| GET    | `/api/filmes`      | Lista todos os filmes            |
+| GET    | `/api/filmes/{id}` | Busca um filme pelo ID           |
+| POST   | `/api/filmes`      | Cadastra um novo filme           |
+| PUT    | `/api/filmes/{id}` | Atualiza um filme pelo ID        |
+| DELETE | `/api/filmes/{id}` | Remove um filme pelo ID          |
+
+### Resenhas `/api/resenhas`
+
+| Método | Rota                             | Descrição                            |
+|--------|----------------------------------|--------------------------------------|
+| GET    | `/api/resenhas`                  | Lista todas as resenhas              |
+| GET    | `/api/resenhas/{id}`             | Busca uma resenha pelo ID            |
+| GET    | `/api/resenhas/filme/{filmeId}`  | Lista resenhas de um filme específico|
+| POST   | `/api/resenhas`                  | Cadastra uma nova resenha            |
+| PUT    | `/api/resenhas/{id}`             | Atualiza uma resenha pelo ID         |
+| DELETE | `/api/resenhas/{id}`             | Remove uma resenha pelo ID           |
+
+### Utilitários
 
 | Método | Rota              | Descrição                        |
 |--------|-------------------|----------------------------------|
@@ -142,206 +122,45 @@ A interface do Swagger permite explorar e testar todos os endpoints interativame
 
 ---
 
-## 📦 Exemplos de Uso
+## 🧱 Estrutura do Projeto
 
-### Criar um Filme
-
-**Request:**
-```http
-POST /api/filmes
-Content-Type: application/json
-
-{
-  "titulo": "Interestelar",
-  "diretor": "Christopher Nolan",
-  "sinopse": "Uma equipe de exploradores viaja através de um buraco de minhoca no espaço.",
-  "ano": 2014,
-  "genero": "Ficção Científica",
-  "lancado": true
-}
 ```
-
-**Response `201 Created`:**
-```json
-{
-  "id": "664a1f2e3b4c5d6e7f8a9b0c",
-  "titulo": "Interestelar",
-  "diretor": "Christopher Nolan",
-  "sinopse": "Uma equipe de exploradores viaja através de um buraco de minhoca no espaço.",
-  "ano": 2014,
-  "genero": "Ficção Científica",
-  "lancado": true
-}
+/
+├── api/
+│   ├── Models/
+│   │   ├── Filme.cs
+│   │   └── Resenha.cs
+│   ├── Repositories/
+│   │   ├── IFilmeRepository.cs
+│   │   ├── FilmeRepository.cs
+│   │   ├── IResenhaRepository.cs
+│   │   └── ResenhaRepository.cs
+│   ├── Services/
+│   │   ├── IFilmeService.cs
+│   │   ├── FilmeService.cs
+│   │   ├── IResenhaService.cs
+│   │   └── ResenhaService.cs
+│   ├── Program.cs
+│   └── AtividadeSemestral.csproj
+├── frontend/
+│   └── index.html
+└── README.md
 ```
 
 ---
 
-### Criar uma Resenha
+## 🔑 Variáveis de Ambiente
 
-**Request:**
-```http
-POST /api/resenhas
-Content-Type: application/json
+| Variável                    | Descrição                              | Exemplo                         |
+|-----------------------------|----------------------------------------|---------------------------------|
+| `MongoDb__ConnectionString` | URI de conexão com o MongoDB           | `mongodb://localhost:27017`     |
+| `MongoDb__DatabaseName`     | Nome do banco de dados a ser utilizado | `ResenhasFilmes`                |
 
-{
-  "filmeId": "664a1f2e3b4c5d6e7f8a9b0c",
-  "autorNome": "Maria Silva",
-  "nota": 5,
-  "texto": "Obra-prima do cinema moderno. Visualmente deslumbrante e emocionalmente devastador."
-}
-```
-
-**Response `201 Created`:**
-```json
-{
-  "id": "664b2a3f4c5d6e7f8a9b0d1e",
-  "filmeId": "664a1f2e3b4c5d6e7f8a9b0c",
-  "autorNome": "Maria Silva",
-  "nota": 5,
-  "texto": "Obra-prima do cinema moderno. Visualmente deslumbrante e emocionalmente devastador.",
-  "dataCriacao": "2026-05-15T14:30:00Z"
-}
-```
+> As variáveis seguem a convenção de configuração hierárquica do ASP.NET Core (`__` como separador de seção).
 
 ---
 
-### Buscar Resenhas de um Filme
+## 📦 Dependências
 
-**Request:**
-```http
-GET /api/resenhas/filme/664a1f2e3b4c5d6e7f8a9b0c
-```
-
-**Response `200 OK`:**
-```json
-[
-  {
-    "id": "664b2a3f4c5d6e7f8a9b0d1e",
-    "filmeId": "664a1f2e3b4c5d6e7f8a9b0c",
-    "autorNome": "Maria Silva",
-    "nota": 5,
-    "texto": "Obra-prima do cinema moderno.",
-    "dataCriacao": "2026-05-15T14:30:00Z"
-  }
-]
-```
-
----
-
-## 🌱 Variáveis de Ambiente
-
-| Variável                    | Descrição                          | Exemplo                              |
-|-----------------------------|------------------------------------|--------------------------------------|
-| `MongoDb__ConnectionString` | String de conexão com o MongoDB    | `mongodb://localhost:27017`          |
-| `MongoDb__DatabaseName`     | Nome do banco de dados             | `filmesresenha`                      |
-
-
----
-
-## 🐳 MongoDB com Docker (opcional)
-
-Para subir o MongoDB localmente via Docker Compose, crie um `docker-compose.yml`:
-
-```yaml
-version: '3.8'
-services:
-  mongodb:
-    image: mongo:7
-    container_name: mongo_filmesresenha
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
-volumes:
-  mongo_data:
-```
-
-Execute:
-```bash
-docker-compose up -d
-```
-
----
-
-## 🧱 Modelos de Dados
-
-### Filme
-
-| Campo     | Tipo    | Validação                        |
-|-----------|---------|----------------------------------|
-| `id`      | string  | Gerado automaticamente (ObjectId)|
-| `titulo`  | string  | Obrigatório, máx. 300 chars      |
-| `diretor` | string  | Obrigatório, máx. 100 chars      |
-| `sinopse` | string  | Obrigatório, máx. 1000 chars     |
-| `ano`     | int     | Entre 1888 e 2030                |
-| `genero`  | string  | Obrigatório, máx. 100 chars      |
-| `lancado` | bool    | Padrão: `true`                   |
-
-### Resenha
-
-| Campo        | Tipo     | Validação                           |
-|--------------|----------|-------------------------------------|
-| `id`         | string   | Gerado automaticamente (ObjectId)   |
-| `filmeId`    | string   | Obrigatório — deve existir no banco |
-| `autorNome`  | string   | Obrigatório, máx. 100 chars         |
-| `nota`       | int      | Entre 1 e 5                         |
-| `texto`      | string   | Obrigatório, mín. 10, máx. 2000 chars|
-| `dataCriacao`| DateTime | Gerado automaticamente (UTC)        |
-
----
-
-## 🧰 Stack Tecnológica
-
-| Camada    | Tecnologia                   |
-|-----------|------------------------------|
-| Backend   | .NET 10 (C#) — Minimal API  |
-| Banco     | MongoDB                      |
-| Driver    | MongoDB.Driver (NuGet)       |
-| Docs      | Swagger / OpenAPI (Swashbuckle) |
-| Frontend  | HTML + JavaScript (fetch)    |
-
----
-
-## 📐 Princípios SOLID aplicados
-
-Consulte o arquivo [`SOLID.md`](./SOLID.md) para a descrição detalhada de cada princípio aplicado no projeto.
-
-Resumo:
-
-| Princípio | Onde se aplica |
-|-----------|---------------|
-| **S** — Single Responsibility | Cada classe tem uma única responsabilidade: `FilmeService` cuida das regras de negócio, `FilmeRepository` cuida do acesso ao banco |
-| **I** — Interface Segregation | Interfaces separadas por entidade: `IFilmeRepository`, `IResenhaRepository`, `IFilmeService`, `IResenhaService` |
-| **D** — Dependency Inversion | Services e Repositories são injetados via `IServiceCollection` — as classes dependem de abstrações, não de implementações concretas |
-
----
-
-## 🗂️ Estrutura do Projeto
-
-```
-AtividadeSemestral/
-├── Models/
-│   ├── Filme.cs
-│   └── Resenha.cs
-├── Repositories/
-│   ├── IFilmeRepository.cs
-│   ├── FilmeRepository.cs
-│   ├── IResenhaRepository.cs
-│   └── ResenhaRepository.cs
-├── Services/
-│   ├── IFilmeService.cs
-│   ├── FilmeService.cs
-│   ├── IResenhaService.cs
-│   └── ResenhaService.cs
-├── Program.cs
-├── AtividadeSemestral.csproj
-├── README.md
-└── SOLID.md
-```
-
----
-
-## 👤 Autor
-
-Desenvolvido como Trabalho Prático Semestral da disciplina **Arquitetura de Aplicações Web — 2026.1**.
+- [`MongoDB.Driver`](https://www.nuget.org/packages/MongoDB.Driver/) `3.8.0`
+- [`Swashbuckle.AspNetCore`](https://www.nuget.org/packages/Swashbuckle.AspNetCore/) `10.1.7`
