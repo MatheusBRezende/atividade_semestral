@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineVault</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-brand">
+      <span class="navbar-logo">CV</span>
+      <span class="navbar-name">CineVault</span>
+    </div>
+
+    <!-- USER NAV -->
+    <div class="navbar-links" id="navUser">
+      <button class="nav-link active" data-view="biblioteca" onclick="navegarPara('biblioteca')">
+        <span class="nav-icon">▦</span> Biblioteca
+      </button>
+      <button class="nav-link" data-view="favoritos" onclick="navegarPara('favoritos')">
+        <span class="nav-icon">♥</span> Favoritos
+      </button>
+      <button class="nav-link" data-view="assistidos" onclick="navegarPara('assistidos')">
+        <span class="nav-icon">✓</span> Assistidos
+      </button>
+    </div>
+
+    <!-- ADMIN NAV (hidden by default) -->
+    <div class="navbar-links admin-nav" id="navAdmin" style="display:none">
+      <button class="nav-link active" data-view="gerenciar" onclick="navegarPara('gerenciar')">
+        <span class="nav-icon">⚙</span> Gerenciar
+      </button>
+      <button class="nav-link" data-view="resenhas-admin" onclick="navegarPara('resenhas-admin')">
+        <span class="nav-icon">★</span> Resenhas
+      </button>
+      <button class="nav-link" data-view="stats" onclick="navegarPara('stats')">
+        <span class="nav-icon">▲</span> Estatísticas
+      </button>
+    </div>
+
+    <div class="navbar-actions">
+      <div id="authGuest" class="auth-guest">
+        <button class="btn-auth outline" onclick="abrirModalLogin()">Entrar</button>
+        <button class="btn-auth filled" onclick="abrirModalCadastro()">Criar conta</button>
+      </div>
+      <div id="authUser" class="auth-user" style="display:none">
+        <span class="user-badge" id="userBadge"></span>
+        <div class="user-menu" id="userMenu">
+          <button class="user-menu-item" onclick="toggleAdminMode()">
+            <span id="adminModeLabel">Modo Admin</span>
+          </button>
+          <button class="user-menu-item danger" onclick="sair()">Sair</button>
+        </div>
+        <button class="avatar-btn" id="avatarBtn" onclick="toggleUserMenu()"></button>
+      </div>
+    </div>
+    <button class="navbar-hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <section id="hero" class="hero">
+    <div class="hero-content">
+      <span class="hero-label">Est. 2024</span>
+      <h1 class="hero-title">CineVault</h1>
+      <p class="hero-subtitle">Seu arquivo pessoal de cinema</p>
+      <a href="#view-biblioteca" class="btn-explorar" onclick="navegarPara('biblioteca')">Explorar Catálogo</a>
+    </div>
+    <div class="hero-filmstrip"></div>
+  </section>
+
+  <!-- ===================== MAIN CONTENT AREA ===================== -->
+  <main id="mainContent">
+
+    <!-- ===== VIEW: BIBLIOTECA ===== -->
+    <section id="view-biblioteca" class="view active-view">
+      <div class="catalogo">
+        <div class="catalogo-header">
+          <div class="catalogo-title-row">
+            <h2>Catálogo</h2>
+            <div class="header-actions">
+              <span id="filmCount" class="film-count"></span>
+            </div>
+          </div>
+          <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar por título, diretor ou gênero…" aria-label="Buscar filmes" oninput="filtrarFilmes()" />
+            <select id="genreFilter" onchange="filtrarFilmes()">
+              <option value="">Todos os gêneros</option>
+            </select>
+            <button id="btnCarregar" class="btn-reload" title="Recarregar" aria-label="Recarregar lista" onclick="carregarTudo()">↻</button>
+          </div>
+        </div>
+        <p id="statusMsg" class="status-msg" aria-live="polite"></p>
+        <div id="listaFilmes" class="filmes-grid" role="list">
+          <div class="film-card skeleton" role="listitem"></div>
+          <div class="film-card skeleton" role="listitem"></div>
+          <div class="film-card skeleton" role="listitem"></div>
+          <div class="film-card skeleton" role="listitem"></div>
+          <div class="film-card skeleton" role="listitem"></div>
+          <div class="film-card skeleton" role="listitem"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: FAVORITOS ===== -->
+    <section id="view-favoritos" class="view">
+      <div class="catalogo">
+        <div class="catalogo-header">
+          <div class="catalogo-title-row">
+            <h2>Favoritos</h2>
+          </div>
+        </div>
+        <div id="listaFavoritos" class="filmes-grid" role="list">
+          <div class="empty-state">
+            <span class="empty-icon">♥</span>
+            <p>Você ainda não tem favoritos.</p>
+            <p class="empty-sub">Clique no coração nos cards de filmes para adicioná-los aqui.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: ASSISTIDOS ===== -->
+    <section id="view-assistidos" class="view">
+      <div class="catalogo">
+        <div class="catalogo-header">
+          <div class="catalogo-title-row">
+            <h2>Assistidos</h2>
+          </div>
+        </div>
+        <div id="listaAssistidos" class="filmes-grid" role="list">
+          <div class="empty-state">
+            <span class="empty-icon">✓</span>
+            <p>Nenhum filme marcado como assistido.</p>
+            <p class="empty-sub">Marque filmes como assistidos para acompanhar sua jornada cinéfila.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: ADMIN - GERENCIAR ===== -->
+    <section id="view-gerenciar" class="view">
+      <div class="catalogo">
+        <div class="catalogo-header">
+          <div class="catalogo-title-row">
+            <h2>Gerenciar Filmes</h2>
+            <button class="btn-novo-filme" onclick="abrirModalCriar()">+ Novo Filme</button>
+          </div>
+        </div>
+        <div id="listaAdmin" class="filmes-grid" role="list"></div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: ADMIN - RESENHAS ===== -->
+    <section id="view-resenhas-admin" class="view">
+      <div class="catalogo">
+        <div class="catalogo-header">
+          <div class="catalogo-title-row">
+            <h2>Resenhas</h2>
+          </div>
+        </div>
+        <div id="listaResenhasAdmin" class="resenhas-admin-lista"></div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: ADMIN - STATS ===== -->
+    <section id="view-stats" class="view">
+      <div class="catalogo">
+        <div class="catalogo-header">
+          <div class="catalogo-title-row">
+            <h2>Estatísticas</h2>
+          </div>
+        </div>
+        <div id="statsContent" class="stats-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============= DETAIL PANEL (fullscreen) ============= -->
+  <div id="detalhePanel" class="detalhe-panel" role="dialog" aria-modal="true" aria-label="Detalhes do filme" hidden>
+    <button id="fecharDetalhe" class="btn-fechar" aria-label="Fechar painel" onclick="fecharDetalhes()">✕</button>
+    <div id="detalheConteudo" class="detalhe-conteudo"></div>
+  </div>
+
+  <!-- ============= CREATE/EDIT MOVIE MODAL ============= -->
+  <div id="criarModal" class="modal" role="dialog" aria-modal="true" aria-label="Criar novo filme" hidden>
+    <div class="modal-inner">
+      <div class="modal-header">
+        <h3 id="modalFilmeTitulo">Novo Filme</h3>
+        <button class="btn-fechar-modal" aria-label="Fechar modal" onclick="fecharModalCriar()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editFilmeId" />
+        <div class="form-group">
+          <label for="title">Título <span class="obrigatorio">*</span></label>
+          <input type="text" id="title" placeholder="Ex: Blade Runner" />
+        </div>
+        <div class="form-group">
+          <label for="director">Diretor <span class="obrigatorio">*</span></label>
+          <input type="text" id="director" placeholder="Ex: Ridley Scott" />
+        </div>
+        <div class="form-group">
+          <label for="synopsis">Sinopse <span class="obrigatorio">*</span></label>
+          <textarea id="synopsis" rows="4" placeholder="Descreva o enredo…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="year">Ano <span class="obrigatorio">*</span></label>
+            <input type="number" id="year" placeholder="Ex: 1982" min="1900" max="2099" />
+          </div>
+          <div class="form-group">
+            <label for="genre">Gênero <span class="obrigatorio">*</span></label>
+            <input type="text" id="genre" placeholder="Ex: Ficção Científica" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="posterUrl">URL do Poster <span class="opcional">(opcional)</span></label>
+          <input type="url" id="posterUrl" placeholder="https://exemplo.com/poster.jpg" />
+        </div>
+        <div class="form-group">
+          <label for="elenco">Elenco <span class="opcional">(opcional)</span></label>
+          <input type="text" id="elenco" placeholder="Ex: Harrison Ford, Sean Young" />
+        </div>
+        <div class="form-error" id="formError" role="alert"></div>
+        <button class="btn-submit" id="btnSubmitFilme" onclick="submitFilme()">Criar Filme</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============= AUTH MODAL ============= -->
+  <div id="authModal" class="modal" role="dialog" aria-modal="true" hidden>
+    <div class="modal-inner modal-auth">
+      <div class="modal-header">
+        <h3 id="authModalTitulo">Entrar</h3>
+        <button class="btn-fechar-modal" onclick="fecharModalAuth()">✕</button>
+      </div>
+      <div class="modal-body" id="authModalBody">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

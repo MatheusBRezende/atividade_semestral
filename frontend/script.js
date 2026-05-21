@@ -92,48 +92,9 @@ async function buscarResenhas() {
 //TO-DO
 //CRIAR,ATUALIZAR E DELETAR RESENHAS
 
-function renderizarFilmesEResenhas(filmes, resenhas) {
-  lista.innerHTML = "";
-  filmes.forEach((filme) => {
-    const card = document.createElement("div");
-    card.className = "film-card";
 
-    const resenhasDesteFilme = resenhas.filter((r) => r.filmeId === filme.id);
-    card.innerHTML = `
-            <h3>${filme.titulo}</h3>
-            <p><strong>Diretor:</strong> ${filme.diretor}</p>
-            <p><strong>Sinopse:</strong> ${filme.sinopse}</p>
-            <hr>
-            <div class="container-resenhas">
-                <h4>Resenhas:</h4>
-                ${
-                  resenhasDesteFilme.length > 0
-                    ? resenhasDesteFilme
-                        .map(
-                          (r) => `
-                        <div class="resenha-item">
-                            <p><strong>${r.autorNome}:</strong> ${r.texto} (Nota: ${r.nota})</p>
-                        </div>
-                    `,
-                        )
-                        .join("")
-                    : "<p>Ainda não há resenhas para este filme.</p>"
-                }
-            </div>
-        `;
-
-    lista.appendChild(card);
-  });
-}
-
-async function carregarTudo() {
-  const filmes = await buscarFilmes();
-  const resenhas = await buscarResenhas();
-
-  if (filmes && resenhas) {
-    renderizarFilmesEResenhas(filmes, resenhas);
-  }
-}
 
 btn.addEventListener("click", carregarTudo);
 btnCriar.addEventListener("click", criarFilmes);
+buscarFilmes;
+buscarResenhas;
