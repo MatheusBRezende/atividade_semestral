@@ -149,6 +149,56 @@ O frontend está na pasta `frontend/`. Para utilizá-lo, basta abrir o arquivo `
 
 ---
 
+### Exemplo - Cadastrar Filme
+
+**REQUISIÇÃO**
+```json
+POST /api/filmes
+{
+    "titulo": "Blade Runner",
+    "diretor": "Ridley Scott",
+    "sinopse": "Em 2019, caçadores de replicantes...",
+    "ano": 1982,
+    "genero": "Ficção Científica",
+    "lancado": true
+}
+``` 
+**RESPOSTA (201 CREATED)**
+```json
+{
+  "id": "664f1a2b3c4d5e6f7a8b9c0d",
+  "titulo": "Blade Runner",
+  "diretor": "Ridley Scott",
+  "ano": 1982,
+  "genero": "Ficção Científica",
+  "lancado": true
+}
+```
+
+### Exemplo - Cadastrar Resenha
+```json
+POST /api/resenhas
+{
+    "filmeId": "664f1a2b3c4d5e6f7a8b9c0d",
+    "autorNome": "José",
+    "nota": 5,
+    "texto": "Filme bão"
+}
+``` 
+
+**RESPOSTA (201 CREATED)**
+```json
+{
+  "id": "774g2b3c4d5e6f7a8b9c0e",
+  "filmeId": "664f1a2b3c4d5e6f7a8b9c0d",
+  "autorNome": "José",
+  "nota": 5,
+  "texto": "Filme bão",
+  "dataCriacao": "2026-05-21T00:00:00Z"
+}
+```
+---
+
 ## 🔑 Variáveis de Ambiente
 
 | Variável                    | Descrição                              | Exemplo                         |
