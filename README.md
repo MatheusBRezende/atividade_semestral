@@ -1,6 +1,6 @@
 # 🎬 Filmes & Resenhas API
 
-API RESTful para gerenciamento de filmes e resenhas, desenvolvida como Trabalho Prático Semestral da disciplina **Arquitetura de Aplicações Web — 2026.1**.
+API RESTful para gerenciamento de filmes e resenhas, desenvolvida como Trabalho Prático Semestral da disciplina **Arquitetura de Aplicações Web — 2026**.
 
 ---
 
